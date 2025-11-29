@@ -1,5 +1,16 @@
 use serde::{Serialize, Deserealize};
 use std::io;
+
+fn print_banner() {
+    println!("
+        ███╗   ██╗ ██████╗ ████████╗███████╗███████╗\n
+        ████╗  ██║██╔═══██╗╚══██╔══╝██╔════╝██╔════╝\n
+        ██╔██╗ ██║██║   ██║   ██║   █████╗  ███████╗\n
+        ██║╚██╗██║██║   ██║   ██║   ██╔══╝  ╚════██║\n
+        ██║ ╚████║╚██████╔╝   ██║   ███████╗███████║\n
+        ╚═╝  ╚═══╝ ╚═════╝    ╚═╝   ╚══════╝╚══════╝");
+}
+
 #[derive(Serialize, Deserealize)]
 struct Note {
     id: u32,
@@ -14,16 +25,6 @@ fn print_menu() {
     println!("Enter choice: ");
 }
 
-fn print_banner() {
-    println!("
-        ███╗   ██╗ ██████╗ ████████╗███████╗███████╗\n
-        ████╗  ██║██╔═══██╗╚══██╔══╝██╔════╝██╔════╝\n
-        ██╔██╗ ██║██║   ██║   ██║   █████╗  ███████╗\n
-        ██║╚██╗██║██║   ██║   ██║   ██╔══╝  ╚════██║\n
-        ██║ ╚████║╚██████╔╝   ██║   ███████╗███████║\n
-        ╚═╝  ╚═══╝ ╚═════╝    ╚═╝   ╚══════╝╚══════╝");
-}
-
 fn main() -> io::Result<()> {
     printBanner();
     let mut notes: Vec<Note> = Vec::new();
@@ -31,7 +32,7 @@ fn main() -> io::Result<()> {
         printMenu();
         let mut input = String::new();
         io::stdin().read_line(&mut input)?;
-        let clean_input: i32  = input.trim().parse().expect("Not a valid choice");
+        let clean_input: i32 = input.trim().parse().expect("Not a valid choice");
 
         if clean_input == 1 {
             //add note
