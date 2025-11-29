@@ -2,6 +2,11 @@ use serde::{Serialize, Deserialize};
 use std::io;
 use chrono::Local;
 
+/*TODO:
+-color
+-remove
+-
+*/
 fn print_banner() {
     println!("
         ███╗   ██╗ ██████╗ ████████╗███████╗███████╗
@@ -42,7 +47,7 @@ fn add_note(notes: &mut Vec<Note>) -> io::Result<()> {
     };
 
     notes.push(new_note);
-    println!("Note added");
+    println!(">Note added");
     Ok(())
 }
 
@@ -54,18 +59,30 @@ fn main() -> io::Result<()> {
         print_menu();
         let mut input = String::new();
         io::stdin().read_line(&mut input)?;
-        let clean_input: i32 = input.trim().parse().expect("Not a valid choice");
+        let clean_input: i32 = input.trim().parse().unwrap_or(0);
 
+        println!();
         if clean_input == 1 {
-            add_note(&mut notes);
+            if let Err(e) = add_note(&mut notes) {
+                eprint!("Error adding note: {}", e);
+            }
+            println!();
         } else if clean_input == 2 {
-            //remove note
+            println!("Remove not implemented");//remove note
+            println!();
         } else if clean_input == 3 {
             //view notes
+            println!("------NOTES------");
+            for note in &notes {
+                println!("{}. {} ({})", note.id, note.body, note.timestamp);
+            }
+            println!("-----------------\n");
         } else if clean_input == 4 {
+            println!(">Quitting...");
             break; //quit
         } else {
             println!("Invalid choice.");
+            println!();
         }
     }
     Ok(())
