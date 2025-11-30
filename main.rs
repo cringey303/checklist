@@ -56,6 +56,8 @@ fn remove_note(notes: &mut Vec<Note>) -> io::Result<()> {
     let mut input = String::new();
     io::stdin().read_line(&mut input).expect("Error: Failed to read line.");
     let id: u32 = input.trim().parse().expect("Error: ID must be an integer.");
+    let index: u32 = id - 1;
+    notes.remove(index.try_into().unwrap());
     println!("Removed note {}", id);
     Ok(())
 
@@ -72,21 +74,29 @@ fn main() -> io::Result<()> {
         let clean_input: i32 = input.trim().parse().unwrap_or(0);
 
         println!();
+        //add note
         if clean_input == 1 {
             if let Err(e) = add_note(&mut notes) {
                 eprint!("Error adding note: {}", e);
             }
             println!();
+
+        //remove note
         } else if clean_input == 2 {
-            println!("Remove not implemented");//remove note
+            if let Err(e) = remove_note(&mut notes) {
+                eprint!("Error removing note: {}", e);
+            }
             println!();
+
+        //view notes
         } else if clean_input == 3 {
-            //view notes
             println!("------NOTES------");
             for note in &notes {
                 println!("{}. {} ({})", note.id, note.body, note.timestamp);
             }
             println!("-----------------\n");
+
+        //quit
         } else if clean_input == 4 {
             println!(">Quitting...");
             break; //quit
