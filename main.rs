@@ -58,7 +58,15 @@ fn remove_note(notes: &mut Vec<Note>) -> io::Result<()> {
     let id: u32 = input.trim().parse().expect("Error: ID must be an integer.");
     let index: u32 = id - 1;
     notes.remove(index.try_into().unwrap());
-    println!("Removed note {}", id);
+    println!(">Removed note {}", id);
+
+    //update indices
+    let mut i: u32 = 1;
+    for note in notes {
+        note.id = i;
+        i+=1;
+    }
+
     Ok(())
 
 }
