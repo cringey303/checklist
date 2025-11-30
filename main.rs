@@ -51,6 +51,16 @@ fn add_note(notes: &mut Vec<Note>) -> io::Result<()> {
     Ok(())
 }
 
+fn remove_note(notes: &mut Vec<Note>) -> io::Result<()> {
+    println!("Enter note ID: ");
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).expect("Error: Failed to read line.");
+    let id: u32 = input.trim().parse().expect("Error: ID must be an integer.");
+    println!("Removed note {}", id);
+    Ok(())
+
+}
+
 fn main() -> io::Result<()> {
     print_banner();
     let mut notes: Vec<Note> = Vec::new();
