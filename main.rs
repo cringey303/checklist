@@ -4,7 +4,7 @@ use chrono::Local;
 
 /*TODO:
 -color
--remove_note(): valid input loop
+-add_note(): valid input loop (same as remove)
 */
 fn print_banner() {
     println!("
@@ -52,23 +52,43 @@ fn add_note(notes: &mut Vec<Note>) -> io::Result<()> {
 
 //TODO: loop to keep taking integer until it is < len notes
 fn remove_note(notes: &mut Vec<Note>) -> io::Result<()> {
-    println!("Enter note ID: ");
-    let mut input = String::new();
-    io::stdin().read_line(&mut input).expect("Error: Failed to read line.");
-    let id: u32 = input.trim().parse().expect("Error: ID must be an integer.");
-    let index: u32 = id - 1;
-    notes.remove(index.try_into().unwrap());
-    println!(">Removed note {}", id);
+    loop {
+        println!("Enter note ID to remove ('q' to cancel): ");
+        let mut input = String::new();
+        io::stdin().read_line(&mut input)?;
 
-    //update indices
-    let mut i: u32 = 1;
-    for note in notes {
-        note.id = i;
-        i+=1;
+        //cancel
+        if input.trim().eq_ignore_ascii_case("q") {
+            println!(">Cancelled");
+            break;
+        }
+
+        let id: u32 = match input.trim().parse() {
+            Ok(num) => num,
+            Err(_) => {
+                println!("Error: Enter a valid number");
+                continue; //restart loop
+            }
+        };
+
+        //check bounds
+        if id == 0 || id > notes.len() as u32 {
+            println!("Error: Note {} does not exist", id);
+            continue; //restart loop
+        }
+
+        let index = (id - 1) as usize;
+        notes.remove(index);
+        println!(">Removed Note {}", id);
+
+        //update indices
+        let mut i: u32 = 1;
+        for (i, note) in notes.iter_mut().enumerate() {
+            note.id = (i+1) as u32;
+        }
+        break;
     }
-
     Ok(())
-
 }
 
 fn main() -> io::Result<()> {
