@@ -9,7 +9,7 @@ A simple to-do list to help me learn Rust.
 
 Next steps:
 - Add note edit/search functionality
-- Add CLAP functionality (command line 
+- Add CLAP (command line argument parser) functionality for quick commands
 
 ## How to Run
 
