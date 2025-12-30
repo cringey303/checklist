@@ -2,19 +2,16 @@ use serde::{Serialize, Deserialize};
 use std::io;
 use std::fs;
 use chrono::Local;
+use colored::*;
 
-/*TODO:
--color
--add_note(): valid input loop (same as remove)
-*/
 fn print_banner() {
-    println!("
+    println!("{}", "
 ███╗   ██╗ ██████╗ ████████╗███████╗███████╗
 ████╗  ██║██╔═══██╗╚══██╔══╝██╔════╝██╔════╝
 ██╔██╗ ██║██║   ██║   ██║   █████╗  ███████╗
 ██║╚██╗██║██║   ██║   ██║   ██╔══╝  ╚════██║
 ██║ ╚████║╚██████╔╝   ██║   ███████╗███████║
-╚═╝  ╚═══╝ ╚═════╝    ╚═╝   ╚══════╝╚══════╝");
+╚═╝  ╚═══╝ ╚═════╝    ╚═╝   ╚══════╝╚══════╝".truecolor(14, 184, 219).bold());
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -30,7 +27,7 @@ fn print_menu() {
     println!("2. Remove Note");
     println!("3. View Notes");
     println!("4. Quit");
-    println!("Enter choice: ");
+    println!("{}", "Enter choice: ".blue().bold());
 }
 
 fn add_note(notes: &mut Vec<Note>) -> io::Result<()> {
@@ -46,7 +43,7 @@ fn add_note(notes: &mut Vec<Note>) -> io::Result<()> {
         }
         //empty note
         if input.trim().is_empty() {
-            println!("Error: Note cannot be empty");
+            println!("{}", "Error: Note cannot be empty".red().bold());
             continue; //restart loop
         }
 
@@ -63,7 +60,7 @@ fn add_note(notes: &mut Vec<Note>) -> io::Result<()> {
     };
 
     notes.push(new_note);
-    println!(">Note added");
+    println!("{}", ">Note added".green().bold());
     Ok(())
 }
 
@@ -82,20 +79,20 @@ fn remove_note(notes: &mut Vec<Note>) -> io::Result<()> {
         let id: u32 = match input.trim().parse() {
             Ok(num) => num,
             Err(_) => {
-                println!("Error: Enter a valid number");
+                println!("{}", "Error: Enter a valid number".red().bold());
                 continue; //restart loop
             }
         };
 
         //check bounds
         if id == 0 || id > notes.len() as u32 {
-            println!("Error: Note {} does not exist", id);
+            println!("{}", format!("Error: Note {} does not exist", id).red().bold());
             continue; //restart loop
         }
 
         let index = (id - 1) as usize;
         notes.remove(index);
-        println!(">Removed Note {}", id);
+        println!("{}", format!(">Removed Note {}", id).green().bold());
 
         //update indices
         for (i, note) in notes.iter_mut().enumerate() {
@@ -134,7 +131,7 @@ fn main() -> io::Result<()> {
         //add note
         if clean_input == 1 {
             if let Err(e) = add_note(&mut notes) {
-                eprint!("Error adding note: {}", e);
+                eprint!("{} {}", "Error adding note:".red().bold(), e);
             } else {
                 save_notes(&notes);
             }
@@ -142,7 +139,7 @@ fn main() -> io::Result<()> {
         //remove note
         } else if clean_input == 2 {
             if let Err(e) = remove_note(&mut notes) {
-                eprint!("Error removing note: {}", e);
+                eprint!("{} {}", "Error removing note:".red().bold(), e);
             } else {
                 save_notes(&notes);
             }
@@ -150,7 +147,7 @@ fn main() -> io::Result<()> {
         //view notes
         } else if clean_input == 3 {
             if notes.is_empty() {
-                println!("No notes found");
+                println!("{}", "No notes found".yellow().bold());
                 continue;
             } else { 
                 println!("------NOTES------");
@@ -162,10 +159,10 @@ fn main() -> io::Result<()> {
 
         //quit
         } else if clean_input == 4 {
-            println!(">Quitting...");
+            println!("{}", ">Quitting...".yellow().bold());
             break; //quit
         } else {
-            println!("Error: Invalid choice");
+            println!("{}", "Error: Invalid choice".red().bold());
         }
     }
     Ok(())
