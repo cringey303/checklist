@@ -7,7 +7,9 @@ A simple to-do list to help me learn Rust.
 - Uses Inquire for a selectable menu
 - Terminal colors
 
-Next steps: Add note editing functionality
+Next steps:
+- Add note edit/search functionality
+- Add CLAP functionality (command line 
 
 ## How to Run
 
