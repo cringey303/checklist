@@ -3,6 +3,7 @@ use std::io;
 use std::fs;
 use chrono::Local;
 use colored::*;
+use inquire::Select;
 
 fn print_banner() {
     println!("{}", "
@@ -19,15 +20,6 @@ struct Note {
     id: u32,
     body: String,
     timestamp: String,
-}
-
-fn print_menu() {
-    println!("-----------------");
-    println!("1. Add Note");
-    println!("2. Remove Note");
-    println!("3. View Notes");
-    println!("4. Quit");
-    println!("{}", "Enter choice: ".blue().bold());
 }
 
 fn add_note(notes: &mut Vec<Note>) -> io::Result<()> {
@@ -122,47 +114,53 @@ fn main() -> io::Result<()> {
     let mut notes: Vec<Note> = load_notes();
 
     loop {
-        print_menu();
-        let mut input = String::new();
-        io::stdin().read_line(&mut input)?;
-        let clean_input: i32 = input.trim().parse().unwrap_or(0);
+        let options = vec![
+            "Add Note",
+            "Remove Note",
+            "View Notes",
+            "Quit",
+        ];
 
-        println!();
-        //add note
-        if clean_input == 1 {
-            if let Err(e) = add_note(&mut notes) {
-                eprint!("{} {}", "Error adding note:".red().bold(), e);
-            } else {
-                save_notes(&notes);
-            }
+        let choice = Select::new("", options).prompt();
 
-        //remove note
-        } else if clean_input == 2 {
-            if let Err(e) = remove_note(&mut notes) {
-                eprint!("{} {}", "Error removing note:".red().bold(), e);
-            } else {
-                save_notes(&notes);
-            }
-
-        //view notes
-        } else if clean_input == 3 {
-            if notes.is_empty() {
-                println!("{}", "No notes found".yellow().bold());
-                continue;
-            } else { 
-                println!("------NOTES------");
-                for note in &notes {
-                    println!("{}. {} ({})", note.id, note.body, note.timestamp);
+        match choice {
+            Ok("Add Note") => {
+                if let Err(e) = add_note(&mut notes) {
+                    eprint!("{} {}", "Error adding note:".red().bold(), e);
+                } else {
+                    save_notes(&notes);
+                    println!();
                 }
-                println!("-----------------\n");
-            }
-
-        //quit
-        } else if clean_input == 4 {
-            println!("{}", ">Quitting...".yellow().bold());
-            break; //quit
-        } else {
-            println!("{}", "Error: Invalid choice".red().bold());
+            },
+            Ok("Remove Note") => {
+                if let Err(e) = remove_note(&mut notes) {
+                    eprint!("{} {}", "Error removing note:".red().bold(), e);
+                } else {
+                    save_notes(&notes);
+                    println!();
+                }
+            },
+            Ok("View Notes") => {
+                if notes.is_empty() {
+                    println!("{}", "No notes found".yellow().bold());
+                    continue;
+                } else {
+                    println!("------NOTES------");
+                    for note in &notes {
+                        println!("{}. {} ({})", note.id, note.body, note.timestamp);
+                    }
+                    println!("-----------------\n");
+                }
+            },
+            Ok("Quit") => {
+                println!();
+                println!("{}", ">Quitting...".yellow().bold());
+                break;
+            },
+            Err(_) => {
+                println!("{}", "Error: Invalid choice".red().bold());
+            },
+            _ => {}
         }
     }
     Ok(())
