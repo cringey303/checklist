@@ -1,6 +1,8 @@
 # checklist
 A simple to-do list to help me learn Rust.
 
+<img width="343" height="186" alt="Screenshot 2026-01-01 at 15 12 51" src="https://github.com/user-attachments/assets/bf54fd04-303a-4223-9a80-da11f89388a1" />
+
 ## Installation
 
 ### Prerequisites
