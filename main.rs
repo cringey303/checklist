@@ -1,10 +1,29 @@
-use serde::{Serialize, Deserialize};
+use serde::{Serialize, Deserialize}; //convert from string to object and vice-versa
 use std::io;
 use std::fs;
-use chrono::Local;
+use chrono::Local; //note timestamps
 use colored::*;
-use inquire::Select;
-use clap::{Parser, Subcommand};
+use inquire::Select; //interactive menu
+use clap::{Parser, Subcommand}; //CLI functionality
+
+//store notes universally
+use std::path::PathBuf;
+use directories::ProjectDirs;
+
+//find/create notes folder and json file
+fn get_database_path() -> PathBuf {
+    if let Some(proj_dirs) = ProjectDirs::from("", "", "notes") {
+        let data_dir = proj_dirs.data_dir();
+
+        if !data_dir.exists() {
+            let _ = fs::create_dir_all(data_dir);
+        }
+
+        return data_dir.join("notes.json");
+    }
+    //creates locally if no home directory
+    PathBuf::from("notes.json")
+}
 
 fn print_banner() {
     println!("{}", "
@@ -123,13 +142,17 @@ fn remove_note(notes: &mut Vec<Note>) -> io::Result<()> {
 }
 
 fn save_notes(notes: &Vec<Note>) {
+    let db_path = get_database_path();
+
     if let Ok(json) = serde_json::to_string_pretty(notes) {
-        let _ = fs::write("notes.json", json);
+        let _ = fs::write(db_path, json);
     }
 }
 
 fn load_notes() -> Vec<Note> {
-    if let Ok(data) = fs::read_to_string("notes.json") {
+    let db_path = get_database_path();
+    
+    if let Ok(data) = fs::read_to_string(db_path) {
         serde_json::from_str(&data).unwrap_or_default()
     } else {
         Vec::new()
