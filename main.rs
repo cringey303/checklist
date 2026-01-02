@@ -191,7 +191,7 @@ fn main() -> io::Result<()> {
                         note.id = (i+1) as u32;
                     }
                     save_notes(&notes);
-                    println!("{}", format!("> Removed Note {}", id).green().bold());
+                    println!("{}", format!(">Removed Note {}", id).green().bold());
                 }
             }
             Commands::List => {
