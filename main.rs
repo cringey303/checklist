@@ -57,15 +57,23 @@ struct Cli {
 #[derive(Subcommand)]
 enum Commands {
     /// add note
+    #[command(visible_alias = "a")]
     Add {
         note: String
     },
+
     /// remove note by id
+    #[command(visible_aliases = ["rm", "del"])]
     Remove {
         id: u32
     },
+
     /// view all notes
+    #[command(visible_aliases = ["view", "ls"])]
     List,
+
+    /// show data location
+    #[command(visible_aliases = ["location", "where"])]
     Path,
 }
 
